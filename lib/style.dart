@@ -138,7 +138,7 @@ class Style {
   ///
   /// Inherited: no,
   /// Default: VerticalAlign.BASELINE,
-  VerticalAlign verticalAlign;
+  double verticalAlign;
 
   /// CSS attribute "`white-space`"
   ///
@@ -338,7 +338,7 @@ class Style {
     TextDecorationStyle textDecorationStyle,
     double textDecorationThickness,
     List<Shadow> textShadow,
-    VerticalAlign verticalAlign,
+    double verticalAlign,
     WhiteSpace whiteSpace,
     double width,
     double wordSpacing,
@@ -480,12 +480,6 @@ enum ListStyleType {
 enum ListStylePosition {
   OUTSIDE,
   INSIDE,
-}
-
-enum VerticalAlign {
-  BASELINE,
-  SUB,
-  SUPER,
 }
 
 enum WhiteSpace {

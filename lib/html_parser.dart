@@ -393,18 +393,8 @@ class HtmlParser extends StatelessWidget {
         child: tree.toWidget(context),
       );
     } else if (tree.style.verticalAlign != null &&
-        tree.style.verticalAlign != VerticalAlign.BASELINE) {
-      double verticalOffset;
-      switch (tree.style.verticalAlign) {
-        case VerticalAlign.SUB:
-          verticalOffset = tree.style.fontSize.size / 2.5;
-          break;
-        case VerticalAlign.SUPER:
-          verticalOffset = tree.style.fontSize.size / -2.5;
-          break;
-        default:
-          break;
-      }
+        tree.style.verticalAlign != 0) {
+      double verticalOffset = tree.style.fontSize.size * tree.style.verticalAlign;
       //Requires special layout features not available in the TextStyle API.
       return WidgetSpan(
         child: Transform.translate(

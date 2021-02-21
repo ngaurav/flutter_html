@@ -226,19 +226,32 @@ class SvgContentElement extends ReplacedElement {
   final String data;
   final double width;
   final double height;
+  final double depth;
+  
+  static const filter = [
+    //R  G   B    A  Const
+    -1.0, 0.0, 0.0, 0.0, 255.0, //
+    0.0, -1.0, 0.0, 0.0, 255.0, //
+    0.0, 0.0, -1.0, 0.0, 255.0, //
+    0.0, 0.0, 0.0, 1.0, 0.0, //
+  ];
 
   SvgContentElement({
     this.data,
     this.width,
     this.height,
+    this.depth = 0,
   });
 
   @override
   Widget toWidget(RenderContext context) {
-    return SvgPicture.string(
-      data,
-      width: width,
-      height: height,
+    return ColorFiltered(
+      child: SvgPicture.string(
+        data,
+        width: width,
+        height: height,
+      ),
+      colorFilter: ColorFilter.matrix(filter.toList()),
     );
   }
 }

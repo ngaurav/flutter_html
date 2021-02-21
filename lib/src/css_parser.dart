@@ -67,6 +67,9 @@ Style declarationsToStyle(Map<String, List<css.Expression>> declarations) {
       case 'text-shadow':
         style.textShadow = ExpressionMapping.expressionToTextShadow(value);
         break;
+      case 'vertical-align':
+        style.verticalAlign = ExpressionMapping.expressionToVerticalAlign(value);
+        break;
     }
   });
   return style;
@@ -377,6 +380,14 @@ class ExpressionMapping {
     }
     List<Shadow> finalShadows = shadow.toSet().toList();
     return finalShadows;
+  }
+  
+  static double expressionToVerticalAlign(String value) {
+    if (value is css.PercentageTerm) {
+      return double.tryParse(value.text);
+    } else {//TODO handle other cases like BASELINE, SUB, SUPER, TEXT-TOP etc.
+      return 0;
+    }
   }
 
   static Color stringToColor(String _text) {

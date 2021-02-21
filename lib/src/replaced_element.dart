@@ -350,6 +350,7 @@ ReplacedElement parseReplacedElement(
           node: element);
     case "img":
       final String src = element.attributes['src'];
+      final String style = element.attributes['style'];
       if (src.startsWith('data:image/svg+xml;base64,')) {
         final int commaLocation = src.indexOf(',') + 1;
         final Uint8List bytes =
@@ -362,6 +363,8 @@ ReplacedElement parseReplacedElement(
                 RegExp(r"width=\'([0-9.]+)").firstMatch(svg).group(1) ?? ""),
             height: double.tryParse(
                 RegExp(r"height=\'([0-9.]+)").firstMatch(svg).group(1) ?? ""),
+            depth: double.tryParse(
+                style.split("vertical-align:")[1].split("pt")[0] ?? "")
           );
         } catch (e) {
           return SvgContentElement(

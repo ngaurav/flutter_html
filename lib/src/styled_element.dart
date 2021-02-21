@@ -342,13 +342,13 @@ StyledElement parseStyledElement(
     case "sub":
       styledElement.style = Style(
         fontSize: FontSize.smaller,
-        verticalAlign: VerticalAlign.SUB,
+        verticalAlign: 1/2.5,
       );
       break;
     case "sup":
       styledElement.style = Style(
         fontSize: FontSize.smaller,
-        verticalAlign: VerticalAlign.SUPER,
+        verticalAlign: -1/2.5,
       );
       break;
     case "tt":

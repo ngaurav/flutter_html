@@ -7,6 +7,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html/image_render.dart';
+import 'package:flutter_html/src/baseline_box.dart';
 import 'package:flutter_html/src/css_parser.dart';
 import 'package:flutter_html/src/html_elements.dart';
 import 'package:flutter_html/src/layout_element.dart';
@@ -337,6 +338,15 @@ class HtmlParser extends StatelessWidget {
     } else if (tree is ReplacedElement) {
       if (tree is TextContentElement) {
         return TextSpan(text: tree.text);
+      } else if (tree is SvgContentElement) {
+        return WidgetSpan(
+          alignment: PlaceholderAlignment.baseline,
+          baseline: TextBaseline.alphabetic,
+          child: BaselineBox(
+            child: tree.toWidget(context),
+            baseline: -context.style.fontSize.size * (100 - tree.depth) / 100,
+          ),
+        );
       } else {
         return WidgetSpan(
           alignment: tree.alignment,
@@ -801,7 +811,8 @@ class StyledText extends StatelessWidget {
   }
 
   double calculateWidth(Display display, RenderContext context) {
-    if ((display == Display.BLOCK || display == Display.LIST_ITEM) && !renderContext.parser.shrinkWrap) {
+    if ((display == Display.BLOCK || display == Display.LIST_ITEM) &&
+        !renderContext.parser.shrinkWrap) {
       return double.infinity;
     }
     if (renderContext.parser.shrinkWrap) {

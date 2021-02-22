@@ -124,7 +124,8 @@ class IframeContentElement extends ReplacedElement {
             : JavascriptMode.disabled,
         navigationDelegate: navigationDelegate,
         gestureRecognizers: {
-          Factory<VerticalDragGestureRecognizer>(() => VerticalDragGestureRecognizer())
+          Factory<VerticalDragGestureRecognizer>(
+              () => VerticalDragGestureRecognizer())
         },
       ),
     );
@@ -226,19 +227,33 @@ class SvgContentElement extends ReplacedElement {
   final String data;
   final double width;
   final double height;
+  final double depth;
+
+  static const filter = [
+    //R  G   B    A  Const
+    -1.0, 0.0, 0.0, 0.0, 255.0, //
+    0.0, -1.0, 0.0, 0.0, 255.0, //
+    0.0, 0.0, -1.0, 0.0, 255.0, //
+    0.0, 0.0, 0.0, 1.0, 0.0, //
+  ];
 
   SvgContentElement({
     this.data,
     this.width,
     this.height,
+    this.depth = 0,
   });
 
   @override
   Widget toWidget(RenderContext context) {
-    return SvgPicture.string(
-      data,
-      width: width,
-      height: height,
+    final ratio = context.style.fontSize.size / 10.0;
+    return ColorFiltered(
+      child: SvgPicture.string(
+        data,
+        width: width * ratio,
+        height: height * ratio,
+      ),
+      colorFilter: ColorFilter.matrix(filter.toList()),
     );
   }
 }
@@ -337,6 +352,7 @@ ReplacedElement parseReplacedElement(
           node: element);
     case "img":
       final String src = element.attributes['src'];
+      final String style = element.attributes['style'];
       if (src.startsWith('data:image/svg+xml;base64,')) {
         final int commaLocation = src.indexOf(',') + 1;
         final Uint8List bytes =
@@ -349,6 +365,8 @@ ReplacedElement parseReplacedElement(
                 RegExp(r"width=\'([0-9.]+)").firstMatch(svg).group(1) ?? ""),
             height: double.tryParse(
                 RegExp(r"height=\'([0-9.]+)").firstMatch(svg).group(1) ?? ""),
+            depth: double.tryParse(
+                style.split("vertical-align:")[1].split("%")[0] ?? ""),
           );
         } catch (e) {
           return SvgContentElement(

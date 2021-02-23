@@ -256,6 +256,11 @@ class SvgContentElement extends ReplacedElement {
       colorFilter: ColorFilter.matrix(filter.toList()),
     );
   }
+
+  double getBaseline(RenderContext context) {
+    final ratio = context.style.fontSize.size / 10.0;
+    return (height + depth) * ratio;
+  }
 }
 
 class EmptyContentElement extends ReplacedElement {
@@ -366,7 +371,7 @@ ReplacedElement parseReplacedElement(
             height: double.tryParse(
                 RegExp(r"height=\'([0-9.]+)").firstMatch(svg).group(1) ?? ""),
             depth: double.tryParse(
-                style.split("vertical-align:")[1].split("%")[0] ?? ""),
+                style.split("vertical-align:")[1].split("pt")[0] ?? ""),
           );
         } catch (e) {
           return SvgContentElement(

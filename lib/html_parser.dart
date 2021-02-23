@@ -343,9 +343,8 @@ class HtmlParser extends StatelessWidget {
           alignment: PlaceholderAlignment.baseline,
           baseline: TextBaseline.alphabetic,
           child: BaselineBox(
-            child: tree.toWidget(context),
-            baseline: -context.style.fontSize.size * (100 - tree.depth) / 100,
-          ),
+              child: tree.toWidget(context),
+              baseline: tree.getBaseline(context)),
         );
       } else {
         return WidgetSpan(

@@ -246,7 +246,8 @@ class SvgContentElement extends ReplacedElement {
 
   @override
   Widget toWidget(RenderContext context) {
-    final ratio = context.style.fontSize.size / 10.0;
+    //15.0 / 14.0 is the adjustment factor for Roboto font and Charter font
+    final ratio = context.style.fontSize.size / 10.0 * 15.0 / 14.0;
     return ColorFiltered(
       child: SvgPicture.string(
         data,
@@ -258,7 +259,7 @@ class SvgContentElement extends ReplacedElement {
   }
 
   double getBaseline(RenderContext context) {
-    final ratio = context.style.fontSize.size / 10.0;
+    final ratio = context.style.fontSize.size / 10.0 * 15.0 / 14.0;
     return (height + depth) * ratio;
   }
 }

@@ -338,7 +338,9 @@ class HtmlParser extends StatelessWidget {
     } else if (tree is ReplacedElement) {
       if (tree is TextContentElement) {
         return TextSpan(text: tree.text);
-      } else if (tree is SvgContentElement) {
+      } else if (tree is SvgContentElement &&
+          tree.height != null &&
+          tree.width != null) {
         return WidgetSpan(
           alignment: PlaceholderAlignment.baseline,
           baseline: TextBaseline.alphabetic,

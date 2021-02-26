@@ -248,14 +248,22 @@ class SvgContentElement extends ReplacedElement {
   Widget toWidget(RenderContext context) {
     //15.0 / 14.0 is the adjustment factor for Roboto font and Charter font
     final ratio = context.style.fontSize.size / 10.0 * 15.0 / 14.0;
-    return ColorFiltered(
-      child: SvgPicture.string(
-        data,
-        width: width * ratio,
-        height: height * ratio,
-      ),
-      colorFilter: ColorFilter.matrix(filter.toList()),
-    );
+    if (width != null && height != null)
+      return ColorFiltered(
+        child: SvgPicture.string(
+          data,
+          width: (width * ratio) ?? null,
+          height: (height * ratio) ?? null,
+        ),
+        colorFilter: ColorFilter.matrix(filter.toList()),
+      );
+    else
+      return ColorFiltered(
+        child: SvgPicture.string(
+          data,
+        ),
+        colorFilter: ColorFilter.matrix(filter.toList()),
+      );
   }
 
   double getBaseline(RenderContext context) {
@@ -359,7 +367,7 @@ ReplacedElement parseReplacedElement(
     case "img":
       final String src = element.attributes['src'];
       final String style = element.attributes['style'];
-      if (src.startsWith('data:image/svg+xml;base64,')) {
+      if (src != null && src.startsWith('data:image/svg+xml;base64,')) {
         final int commaLocation = src.indexOf(',') + 1;
         final Uint8List bytes =
             base64.decode(src.substring(commaLocation).replaceAll(' ', ''));

@@ -10,8 +10,8 @@ import 'package:flutter_html/html_parser.dart';
 import 'package:flutter_html/src/html_elements.dart';
 import 'package:flutter_html/src/utils.dart';
 import 'package:flutter_html/src/widgets/iframe_unsupported.dart'
-  if (dart.library.io) 'package:flutter_html/src/widgets/iframe_mobile.dart'
-  if (dart.library.html) 'package:flutter_html/src/widgets/iframe_web.dart';
+    if (dart.library.io) 'package:flutter_html/src/widgets/iframe_mobile.dart'
+    if (dart.library.html) 'package:flutter_html/src/widgets/iframe_web.dart';
 import 'package:flutter_html/style.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:html/dom.dart' as dom;
@@ -25,12 +25,12 @@ import 'package:webview_flutter/webview_flutter.dart';
 abstract class ReplacedElement extends StyledElement {
   PlaceholderAlignment alignment;
 
-  ReplacedElement({
-    required String name,
-    required Style style,
-    dom.Element? node,
-    this.alignment = PlaceholderAlignment.aboveBaseline
-  }) : super(name: name, children: [], style: style, node: node);
+  ReplacedElement(
+      {required String name,
+      required Style style,
+      dom.Element? node,
+      this.alignment = PlaceholderAlignment.aboveBaseline})
+      : super(name: name, children: [], style: style, node: node);
 
   static List<String?> parseMediaSources(List<dom.Element> elements) {
     return elements
@@ -72,7 +72,11 @@ class ImageContentElement extends ReplacedElement {
     required this.src,
     required this.alt,
     required dom.Element node,
-  }) : super(name: name, style: Style(), node: node, alignment: PlaceholderAlignment.middle);
+  }) : super(
+            name: name,
+            style: Style(),
+            node: node,
+            alignment: PlaceholderAlignment.middle);
 
   @override
   Widget toWidget(RenderContext context) {
@@ -82,9 +86,13 @@ class ImageContentElement extends ReplacedElement {
         return RawGestureDetector(
           child: widget,
           gestures: {
-            MultipleTapGestureRecognizer: GestureRecognizerFactoryWithHandlers<MultipleTapGestureRecognizer>(
-                  () => MultipleTapGestureRecognizer(), (instance) {
-                instance..onTap = () => context.parser.onImageTap?.call(src, context, attributes, element);
+            MultipleTapGestureRecognizer: GestureRecognizerFactoryWithHandlers<
+                MultipleTapGestureRecognizer>(
+              () => MultipleTapGestureRecognizer(),
+              (instance) {
+                instance
+                  ..onTap = () => context.parser.onImageTap
+                      ?.call(src, context, attributes, element);
               },
             ),
           },
@@ -118,7 +126,8 @@ class AudioContentElement extends ReplacedElement {
     return Container(
       width: context.style.width ?? 300,
       height: Theme.of(context.buildContext).platform == TargetPlatform.android
-          ? 48 : 75,
+          ? 48
+          : 75,
       child: ChewieAudio(
         controller: ChewieAudioController(
           videoPlayerController: VideoPlayerController.network(
@@ -210,7 +219,8 @@ class SvgContentElement extends ReplacedElement {
 }
 
 class EmptyContentElement extends ReplacedElement {
-  EmptyContentElement({String name = "empty"}) : super(name: name, style: Style());
+  EmptyContentElement({String name = "empty"})
+      : super(name: name, style: Style());
 
   @override
   Widget? toWidget(_) => null;
@@ -220,7 +230,8 @@ class RubyElement extends ReplacedElement {
   dom.Element element;
 
   RubyElement({required this.element, String name = "ruby"})
-      : super(name: name, alignment: PlaceholderAlignment.middle, style: Style());
+      : super(
+            name: name, alignment: PlaceholderAlignment.middle, style: Style());
 
   @override
   Widget toWidget(RenderContext context) {
@@ -295,31 +306,37 @@ ReplacedElement parseReplacedElement(
       );
     case "iframe":
       return IframeContentElement(
-          name: "iframe",
-          src: element.attributes['src'],
-          width: double.tryParse(element.attributes['width'] ?? ""),
-          height: double.tryParse(element.attributes['height'] ?? ""),
-          navigationDelegate: navigationDelegateForIframe,
-          node: element,
+        name: "iframe",
+        src: element.attributes['src'],
+        width: double.tryParse(element.attributes['width'] ?? ""),
+        height: double.tryParse(element.attributes['height'] ?? ""),
+        navigationDelegate: navigationDelegateForIframe,
+        node: element,
       );
     case "img":
-      final String src = element.attributes['src'];
-      if (src.startsWith('data:image/svg+xml;base64,')) {
+      final String? src = element.attributes['src'];
+      if (src != null && src.startsWith('data:image/svg+xml;base64,')) {
         final int commaLocation = src.indexOf(',') + 1;
         final Uint8List bytes =
             base64.decode(src.substring(commaLocation).replaceAll(' ', ''));
         final svg = String.fromCharCodes(bytes);
         try {
           return SvgContentElement(
+            name: "svg",
             data: svg,
             width: double.tryParse(
-                RegExp(r"width=\'([0-9.]+)").firstMatch(svg).group(1) ?? ""),
+                RegExp(r"width=\'([0-9.]+)").firstMatch(svg)?.group(1) ?? ""),
             height: double.tryParse(
-                RegExp(r"height=\'([0-9.]+)").firstMatch(svg).group(1) ?? ""),
+                RegExp(r"height=\'([0-9.]+)").firstMatch(svg)?.group(1) ?? ""),
+            node: element,
           );
         } catch (e) {
           return SvgContentElement(
+            name: "svg",
             data: svg,
+            height: null,
+            width: null,
+            node: element,
           );
         }
       }
@@ -362,6 +379,7 @@ ReplacedElement parseReplacedElement(
         element: element,
       );
     default:
-      return EmptyContentElement(name: element.localName == null ? "[[No Name]]" : element.localName!);
+      return EmptyContentElement(
+          name: element.localName == null ? "[[No Name]]" : element.localName!);
   }
 }
